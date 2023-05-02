@@ -3,24 +3,29 @@
 //.then(response => response.json())
 
 //let nombre = window.prompt("Por favor, ingresa tu nombre:");
-//console.log('Hola ${nombre}! Bienvenido a mi aplicación');
 
-// Pedir al usuario que ingrese su nombre
-//let nombre = window.prompt("Escriba el nombre de su personaje:");
+import readline from 'readline';
 
-// Mostrar una alerta con el nombre ingresado
-//alert("Hola, " + nombre + "!");
+function nombre (){
 
-// Imprimir el nombre en la consola del navegador
-//console.log("Nombre: " + nombre);
+  const rl = readline.createInterface({
+    input: process.stdin,
+    output: process.stdout
+  });
+  
+  rl.question('ingrese su nombre: ', (nombre) => {
+    console.log(`tu nombre es ${nombre}.`);
+    rl.close();
+  });
+  
+}
 
 
-const fetch = require('node-fetch');
 import inquirer from 'inquirer';
 
 const baseUrl = 'http://www.dnd5eapi.co/api';
 
-// Función que hace una solicitud a la API de D&D 5e
+//Función que hace una solicitud a la API de D&D 5e      <<<<
 async function getData(endpoint) {
   const url = "${baseUrl}/${endpoint}";
   const response = await fetch(url);
@@ -28,7 +33,7 @@ async function getData(endpoint) {
   return data;
 }
 
-// Función que muestra las opciones al usuario
+// Función que muestra las opciones al usuario      <<<<
 async function showMenu() {
   const options = [
     {
@@ -44,7 +49,7 @@ async function showMenu() {
       value: 'monsters',
     },
   ];
-
+  
   const answers = await inquirer.prompt({
     type: 'list',
     name: 'option',
@@ -54,8 +59,17 @@ async function showMenu() {
 
   return answers.option;
 }
+async function getNombre() {
+  const answers = await inquirer.prompt({
+    type: 'input',
+    name: 'Nombre',
+    message: 'ingresa un nombre a tu personaje:',
+  });
+  return answers.searchTerm;
+}
 
-// Función que solicita al usuario el nombre de la clase, hechizo o monstruo
+
+// Función que solicita al usuario el nombre de la clase, hechizo o monstruo <<<<
 async function getSearchTerm() {
   const answers = await inquirer.prompt({
     type: 'input',
@@ -66,16 +80,18 @@ async function getSearchTerm() {
   return answers.searchTerm;
 }
 
-// Función principal que ejecuta la aplicación
+// Función principal que ejecuta la aplicación <<<
 async function main() {
   try {
-    // Mostrar el menú de opciones al usuario y obtener su selección
+    
+    const nombre = await getNombre();
+    // Mostrar el menú de opciones al usuario y obtener su selección  <<<
     const option = await showMenu();
 
-    // Obtener el término de búsqueda del usuario
+    // Obtener el término de búsqueda del usuario <<<<
     const searchTerm = await getSearchTerm();
 
-    // Hacer una solicitud a la API con el término de búsqueda y mostrar los resultados
+    // Hacer una solicitud a la API con el término de búsqueda y mostrar los resultados <<<
     const endpoint = "${option}/?name=${searchTerm}";
     const data = await getData(endpoint);
     console.log(data.results);
