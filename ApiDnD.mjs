@@ -27,6 +27,7 @@ const baseUrl = 'http://www.dnd5eapi.co/api';
 
 //Función que hace una solicitud a la API de D&D 5e      <<<<
 async function getData(endpoint) {
+  console.log (endpoint);
   const url = "${baseUrl}/${endpoint}";
   const response = await fetch(url);
   const data = await response.json();
@@ -34,32 +35,69 @@ async function getData(endpoint) {
 }
 
 // Función que muestra las opciones al usuario      <<<<
-async function showMenu() {
+async function showClasesMenu() {
   const options = [
     {
-      name: 'Buscar información de una clase',
+      name: 'barbarian',
+      value: 'barbarian',
+    },
+    {
+      name: 'bard',
+      value: 'bard',
+    },
+    {
+      name: 'cleric',
+      value: 'cleric',
+    },
+    {
+      name: 'druid',
       value: 'classes',
     },
     {
-      name: 'Buscar información de un hechizo',
-      value: 'spells',
+      name: 'fighter',
+      value: 'fighter',
     },
     {
-      name: 'Buscar información de un monstruo',
-      value: 'monsters',
+      name: 'monk',
+      value: 'monk',
     },
-  ];
+    {
+      name: 'paladin',
+      value: 'paladin',
+    },
+    {
+      name: 'ranger',
+      value: 'ranger',
+    },
+    {
+      name: 'rogue',
+      value: 'rogue',
+    },
+    {
+      name: 'sorcerer',
+      value: 'sorcerer',
+    },
+    {
+      name: 'warlock',
+      value: 'warlock',
+    },
+    {
+      name: 'wizard',
+      value: 'wizard',
+    },
+    ];
+  
   
   const answers = await inquirer.prompt({
     type: 'list',
     name: 'option',
-    message: '¿Qué información deseas buscar?',
+    message: 'selecciona una clase:',
     choices: options,
   });
 
   return answers.option;
 }
-async function getNombre() {
+async function promptNombre() {
   const answers = await inquirer.prompt({
     type: 'input',
     name: 'Nombre',
@@ -70,29 +108,88 @@ async function getNombre() {
 
 
 // Función que solicita al usuario el nombre de la clase, hechizo o monstruo <<<<
-async function getSearchTerm() {
+async function getSubClases(clase) {
+  const response = await fetch('https://www.dnd5eapi.co/api/classes/'+clase+'/subclasses');
+  const data = await response.json();
+  console.log(data);
+  return data;
+
+}
+
+async function showRazasMenu() {
+  const options = [
+  {
+    name: 'dragonborn',
+    value: 'dragonborn',
+  },
+  {
+    name: 'dwarf',
+    value: 'dwarf',
+  },
+  {
+    name: 'elf',
+    value: 'elf',
+  },
+  {
+    name: 'gnome',
+    value: 'gnome',
+  },
+  {
+    name: 'half-elf',
+    value: 'half-elf',
+  },
+  {
+    name: 'half-orc',
+    value: 'half-orc',
+  },
+  {
+    name: 'halfling',
+    value: 'halfling',
+  },
+  {
+    name: 'human',
+    value: 'human',
+  },
+  {
+    name: 'tiefling',
+    value: 'tiefling',
+  },
+  ];
   const answers = await inquirer.prompt({
-    type: 'input',
-    name: 'searchTerm',
-    message: 'Ingresa el nombre de la clase, hechizo o monstruo que deseas buscar:',
+    type: 'list',
+    name: 'r',
+    message: 'selecciona una Raza:',
+    choices: options,
   });
 
-  return answers.searchTerm;
+  return answers.option;
+}
+
+async function getSubRazas(razas) {
+  const response = await fetch('https://www.dnd5eapi.co/api/races/'+razas+'/subraces');
+  const data = await response.json();
+  console.log(data);
+  return data;
+
 }
 
 // Función principal que ejecuta la aplicación <<<
 async function main() {
   try {
     
-    const nombre = await getNombre();
+    const nombre = await promptNombre();
     // Mostrar el menú de opciones al usuario y obtener su selección  <<<
-    const option = await showMenu();
+    const raza = await showRazasMenu();
+    const sub= await getSubRazas();
 
+    const option = await showClasesMenu();
+
+    console.log(option);
     // Obtener el término de búsqueda del usuario <<<<
-    const searchTerm = await getSearchTerm();
+    const searchTerm = await getSubClases(option);
 
     // Hacer una solicitud a la API con el término de búsqueda y mostrar los resultados <<<
-    const endpoint = "${option}/?name=${searchTerm}";
+    const endpoint = `${option}/?name=${searchTerm}`;
     const data = await getData(endpoint);
     console.log(data.results);
   } catch (error) {
