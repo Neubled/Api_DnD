@@ -108,7 +108,11 @@ async function promptNombre() {
 async function getSubClases(clase) {
   const response = await fetch('https://www.dnd5eapi.co/api/classes/'+clase+'/subclasses');
   const data = await response.json();
-  console.log(data);
+ 
+  data.results.forEach(subclase => {
+    console.log(`nombre de la subclase: ${subclase.name }. url: ${subclase.url}`);
+  });
+
   return data;
 
 }
@@ -154,44 +158,68 @@ async function showRazasMenu() {
   ];
   const answers = await inquirer.prompt({
     type: 'list',
-    name: 'r',
+    name: 'race',
     message: 'selecciona una Raza:',
     choices: options,
   });
 
-  return answers.option;
+  return answers.race;
 }
 
 
-async function getSubrazas(raza) {
+async function getSubrazas(raza)
+ { console.log(raza);
   const response = await fetch('https://www.dnd5eapi.co/api/races/'+raza+'/subraces');
   const data = await response.json();
-  console.log(data);
-  return data;
+  data.results.forEach(raza => {
+    console.log(`nombre de la subraza: ${raza.name }. url: ${raza.url}`);
+  });
 
+  return data;
 
 }
 
 async function showLevlMenu(levels) {
   const response = await fetch('https://www.dnd5eapi.co/api/classes/'+levels+'/levels');
   const data = await response.json();
-  console.log(data);
+  data.forEach(nivel => {
+    console.log(`level: ${nivel.level}, 
+    ability_score_bonuses: ${nivel.ability_score_bonuses},    
+    prof_bonus: ${nivel.prof_bonus}, 
+    class_specific: ${JSON.stringify(nivel.class_specific)}, 
+    url: ${nivel.url}
+    -----------------------------------------------------------`); 
+    
+
+  });
   return data;
 
 }
 
-async function showspellsMenu(spells) {
+async function showSpellsMenu(spells) {
   const response = await fetch('https://www.dnd5eapi.co/api/classes/'+spells+'/spells');
   const data = await response.json();
-  console.log(data);
-  return data;
-
+  if (data.results.length === 0) {
+    console.log('Esta clase no tiene hechizos.');
+    console.log('    -----------------------------------------------------------.');
+    return;
+  }
+  const filteredData = data.results.map(spell => ({name: spell.name, url: spell.url}));
+  filteredData.forEach(spell => {
+    console.log(`Hechizo: ${spell.name} - URL: ${spell.url} 
+    -----------------------------------------------------------`); 
+  });
+  return filteredData;
 }
+
 
 async function showFeaturesMenu(feat) {
   const response = await fetch('https://www.dnd5eapi.co/api/classes/'+feat+'/features');
   const data = await response.json();
-  console.log(data);
+  data.results.forEach(feat => {
+    console.log(`feat: ${feat.name }.    url: ${feat.url}
+    -----------------------------------------------------------`); 
+  });
   return data;
 
 }
@@ -199,7 +227,10 @@ async function showFeaturesMenu(feat) {
 async function showProficienciesMenu(proficiencies) {
   const response = await fetch('https://www.dnd5eapi.co/api/classes/'+proficiencies+'/proficiencies');
   const data = await response.json();
-  console.log(data);
+  data.results.forEach(proficiencies => {
+    console.log(`proficiencia: ${proficiencies.name }.    url: ${proficiencies.url}
+    -----------------------------------------------------------`); 
+  });
   return data;
 
 }
@@ -213,7 +244,7 @@ async function main() {
     const nombre = await promptNombre();
     // Mostrar el menú de opciones al usuario y obtener su selección  <<<
     const razas = await showRazasMenu();
-    const Subrazas= await getSubrazas();
+    const Subrazas= await getSubrazas(razas);
 
     const option = await showClasesMenu();
 
@@ -223,7 +254,7 @@ async function main() {
 
     const levels = await showLevlMenu(option);
 
-    const spells = await  showspellsMenu(option);
+    const spells = await  showSpellsMenu(option);
 
     const feat = await  showFeaturesMenu(option);
 
