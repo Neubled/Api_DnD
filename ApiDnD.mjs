@@ -1,8 +1,5 @@
-//fetch('http://www.dnd5eapi.co/swagger/openapi.json')
-
-//.then(response => response.json())
-
-//let nombre = window.prompt("Por favor, ingresa tu nombre:");
+//Martin Delbueno Api D&D
+//------------------------------------------------------------------------
 
 import readline from 'readline';
 
@@ -12,6 +9,7 @@ function nombre (){
     input: process.stdin,
     output: process.stdout
   });
+
   
   rl.question('ingrese su nombre: ', (nombre) => {
     console.log(`tu nombre es ${nombre}.`);
@@ -25,7 +23,7 @@ import inquirer from 'inquirer';
 
 const baseUrl = 'http://www.dnd5eapi.co/api';
 
-//Función que hace una solicitud a la API de D&D 5e      <<<<
+
 async function getData(endpoint) {
   console.log (endpoint);
   const url = "${baseUrl}/${endpoint}";
@@ -34,7 +32,7 @@ async function getData(endpoint) {
   return data;
 }
 
-// Función que muestra las opciones al usuario      <<<<
+
 async function showClasesMenu() {
   const options = [
     {
@@ -51,7 +49,7 @@ async function showClasesMenu() {
     },
     {
       name: 'druid',
-      value: 'classes',
+      value: 'druid',
     },
     {
       name: 'fighter',
@@ -107,7 +105,6 @@ async function promptNombre() {
 }
 
 
-// Función que solicita al usuario el nombre de la clase, hechizo o monstruo <<<<
 async function getSubClases(clase) {
   const response = await fetch('https://www.dnd5eapi.co/api/classes/'+clase+'/subclasses');
   const data = await response.json();
@@ -165,13 +162,49 @@ async function showRazasMenu() {
   return answers.option;
 }
 
-async function getSubRazas(razas) {
-  const response = await fetch('https://www.dnd5eapi.co/api/races/'+razas+'/subraces');
+
+async function getSubrazas(raza) {
+  const response = await fetch('https://www.dnd5eapi.co/api/races/'+raza+'/subraces');
+  const data = await response.json();
+  console.log(data);
+  return data;
+
+
+}
+
+async function showLevlMenu(levels) {
+  const response = await fetch('https://www.dnd5eapi.co/api/classes/'+levels+'/levels');
   const data = await response.json();
   console.log(data);
   return data;
 
 }
+
+async function showspellsMenu(spells) {
+  const response = await fetch('https://www.dnd5eapi.co/api/classes/'+spells+'/spells');
+  const data = await response.json();
+  console.log(data);
+  return data;
+
+}
+
+async function showFeaturesMenu(feat) {
+  const response = await fetch('https://www.dnd5eapi.co/api/classes/'+feat+'/features');
+  const data = await response.json();
+  console.log(data);
+  return data;
+
+}
+
+async function showProficienciesMenu(proficiencies) {
+  const response = await fetch('https://www.dnd5eapi.co/api/classes/'+proficiencies+'/proficiencies');
+  const data = await response.json();
+  console.log(data);
+  return data;
+
+}
+
+
 
 // Función principal que ejecuta la aplicación <<<
 async function main() {
@@ -179,8 +212,8 @@ async function main() {
     
     const nombre = await promptNombre();
     // Mostrar el menú de opciones al usuario y obtener su selección  <<<
-    const raza = await showRazasMenu();
-    const sub= await getSubRazas();
+    const razas = await showRazasMenu();
+    const Subrazas= await getSubrazas();
 
     const option = await showClasesMenu();
 
@@ -188,10 +221,16 @@ async function main() {
     // Obtener el término de búsqueda del usuario <<<<
     const searchTerm = await getSubClases(option);
 
+    const levels = await showLevlMenu(option);
+
+    const spells = await  showspellsMenu(option);
+
+    const feat = await  showFeaturesMenu(option);
+
+    const proficiencies = await  showProficienciesMenu(option);
+
+
     // Hacer una solicitud a la API con el término de búsqueda y mostrar los resultados <<<
-    const endpoint = `${option}/?name=${searchTerm}`;
-    const data = await getData(endpoint);
-    console.log(data.results);
   } catch (error) {
     console.error(error);
   }
