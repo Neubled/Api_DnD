@@ -1,7 +1,7 @@
 //Martin Delbueno Api D&D
 //------------------------------------------------------------------------
 
-import readline from 'readline';
+//import readline from 'readline';
 
 function nombre (){
 
