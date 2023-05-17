@@ -234,38 +234,93 @@ async function showProficienciesMenu(proficiencies) {
   return data;
 
 }
+async function showOptionDataMenu() {
+  const options = [
+  {
+    name: 'Habilidades por nivel',
+    value: 'Habilidades por nivel',
+  },
+  {
+    name: 'lista de Spells',
+    value: 'lista de Spells',
+  },
+  {
+    name: 'Features',
+    value: 'Features',
+  },
+  {
+    name: 'Proficiencies',
+    value: 'Proficiencies',
+  },
+    {
+    name: 'Salir',
+    value: 'Salir',
+  },
+
+
+  ];
+  const answers = await inquirer.prompt({
+    type: 'list',
+    name: 'data',
+    message: 'Que desea ver? :',
+    choices: options,
+  });
+
+  return answers.data;
+  }
+
 
 
 
 // Función principal que ejecuta la aplicación <<<
-async function main() {
-  try {
-    
-    const nombre = await promptNombre();
-    // Mostrar el menú de opciones al usuario y obtener su selección  <<<
-    const razas = await showRazasMenu();
-    const Subrazas= await getSubrazas(razas);
+  async function main() {
+    try {
 
-    const option = await showClasesMenu();
+      const nombre = await promptNombre();
+      // Mostrar el menú de opciones al usuario y obtener su selección  <<<
+      const razas = await showRazasMenu();
+      const Subrazas = await getSubrazas(razas);
 
-    console.log(option);
-    // Obtener el término de búsqueda del usuario <<<<
-    const searchTerm = await getSubClases(option);
+      const option = await showClasesMenu();
 
-    const levels = await showLevlMenu(option);
+      console.log(option);
+      // Obtener el término de búsqueda del usuario <<<<
 
-    const spells = await  showSpellsMenu(option);
-
-    const feat = await  showFeaturesMenu(option);
-
-    const proficiencies = await  showProficienciesMenu(option);
+      const searchTerm = await getSubClases(option);
+ 
+      let data = "aux";
 
 
-    // Hacer una solicitud a la API con el término de búsqueda y mostrar los resultados <<<
-  } catch (error) {
-    console.error(error);
-  }
+
+      while (data !== "Salir") {
+      data = await showOptionDataMenu(option); //<
+      console.log(data)
+
+      switch (data) {
+        case "Habilidades por nivel":
+          await showLevlMenu(option);
+          break;
+        case "lista de Spells":
+          const spells = await showSpellsMenu(option);
+          break;
+
+        case "Features":
+          const feat = await showFeaturesMenu(option);
+          break;
+
+        case "Proficiencies":
+          const proficiencies = await showProficienciesMenu(option);
+          break;
+        }
 }
 
+
+      // Hacer una solicitud a la API con el término de búsqueda y mostrar los resultados <<<
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
 // Ejecutar la función principal
-main();
+main()
+
